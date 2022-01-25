@@ -1,0 +1,194 @@
+#include <iostream>
+#include <string>
+#include <algorithm> // Voor for_each te gebruiken.
+
+using namespace std;
+
+char arr[3][3] = { '1', '2', '3', '4', '5', '6' , '7', '8', '9' };
+char arr2[3][3] = { '+', '+', '+', '+', '+', '+' , '+', '+', '+' };
+char aanduiding = 'X';
+string spelerKruisje, spelerRondje, speler;
+
+void spelersNamen() {
+  cout << "Naam speler 1 (kruisje): ";
+  cin >> spelerKruisje;
+  cout << "Naam speler 2 (rondje): ";
+  cin >> spelerRondje;
+  speler = spelerKruisje;
+
+  //Hoofdletters
+  for_each(speler.begin(), speler.end(), [](char & c){
+	c = ::toupper(c);
+  });
+
+  if (spelerKruisje == spelerRondje) {
+	  cout << "Je mag niet dezelfde naam gebruiken!" <<endl;
+	  cout<<"*************************************"<<endl;
+	  spelersNamen();
+	}
+}
+
+void printSpel() {
+	system("cls");
+	cout << "TIC-TAC-TOE\n" <<
+			"===========" << endl;
+	for (int i = 0; i<3; i++) {
+		for (int j = 0; j<3; j++) {
+			cout<< arr2[i][j] <<"    ";
+		}
+	cout << endl;
+	}
+}
+
+void speelSpel() {
+	char positie;
+	if (aanduiding == 'X') {
+					system("color 8B");
+				}
+				else {
+					system("color 8F");
+				}
+
+	cout << "\nKies jou positie - (" << speler << ") >> ";
+	cin >> positie;
+
+	if (isdigit(positie)) {
+	for (int i = 0; i<3; i++) {
+		for (int j = 0; j<3; j++) {
+			if (arr[i][j] == positie) {
+				if ((arr2[i][j] == 'X') || (arr2[i][j] == 'O')){
+						system("cls");
+						printSpel();
+						cout << "\nDeze plek is al bezet!\n" << endl;
+						speelSpel();
+					}
+				else {
+					arr2[i][j] = aanduiding;
+					}
+				}
+			}
+		}
+		if (aanduiding == 'X'){
+			aanduiding = 'O';
+			speler = spelerRondje;
+			}
+		else {
+		aanduiding = 'X';
+		speler = spelerKruisje;
+		}
+	}
+	else {
+		system("cls");
+        printSpel();
+		cout << "\nType een nummer in tussen 1-9!!\n" << endl;
+		speelSpel();
+    }
+}
+
+char wieGewonnen(){
+	int Xteller = 0, Oteller = 0;
+	int teller = 0;
+
+	//Horizontaal
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j<3; j++) {
+		   if (arr2[i][j] != 'X' && arr2[i][j] != 'O') teller++;
+		   if (arr2[i][j] != 'X' || arr2[i][j] != 'O'){
+
+		   }
+
+		   if (arr2[i][j] == 'X') Xteller++;
+		   else if (arr2[i][j] == 'O') Oteller++;
+
+		   if (Xteller == 3 || Oteller == 3) {
+			   return Xteller > Oteller ? 'X' : 'O';
+		   }
+		}
+		Xteller = 0;
+		Oteller = 0;
+	}
+		//Verticaal
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+			   if (arr2[j][i] == 'X') Xteller++;
+			   else if (arr2[j][i] == 'O') Oteller++;
+			   if (Xteller == 3 || Oteller == 3) {
+				   return Xteller > Oteller ? 'X' : 'O';
+			   }
+		}
+		Xteller = 0;
+		Oteller = 0;
+	}
+	//Diagonaal
+	if (arr2[0][0] == 'X' && arr2[1][1] == 'X' && arr2[2][2] =='X') return 'X';
+	else if (arr2[0][0] == 'O' && arr2[1][1] == 'O' && arr2[2][2] =='O') return 'O';
+	else if (arr2[0][2] == 'X' && arr2[1][1] == 'X' && arr2[2][0] == 'X') return 'X';
+	else if (arr2[0][2] == 'O' && arr2[1][1] == 'O' && arr2[2][0] == 'O') return 'O';
+
+	if (teller == 0) return 'Z';
+
+	return '.';
+}
+
+void resetGame() {
+   for (int i = 0; i<3; i++) {
+			for (int j = 0; j<3; j++) {
+				  arr2[0][0] = {'+'};
+				  arr2[0][1] = {'+'};
+				  arr2[0][2] = {'+'};
+				  arr2[1][0] = {'+'};
+				  arr2[1][1] = {'+'};
+				  arr2[1][2] = {'+'};
+				  arr2[2][0] = {'+'};
+				  arr2[2][1] = {'+'};
+				  arr2[2][2] = {'+'};
+				}
+			}
+   aanduiding = 'X';
+   system("color 07");
+   system("cls");
+}
+
+int main(){
+
+	cout<<"WELCOME DAT JE ONZE TIC TAC TOE GAME SPEELT!"<<endl;
+	cout<<"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="<<endl;
+
+   spelersNamen();
+	while (wieGewonnen() == '.') {
+		printSpel();
+		speelSpel();
+	}
+	printSpel();
+	if (wieGewonnen() == 'Z')
+	cout<<"\nNiemand heeft gewonnen!\n"<<endl;
+	else
+		if (wieGewonnen() == 'X'){
+		cout << "\nDe winnaar is (" << spelerKruisje << ")!\n" << endl;
+		}
+	else {
+	cout<<"\nDe winnaar is (" << spelerRondje << ")!\n";
+	}
+
+	string antwoord;
+	cout <<"\nWillen jullie nog een keer spelen?\n" << endl;
+	cout << "Ja of Nee: ";
+	cin >> antwoord;
+
+	if (antwoord == "ja" || antwoord == "Ja") {
+		resetGame();
+		main();
+	}
+	else {
+		cout << "Dankjewel voor het spelen!" << endl;
+		system("pause >> null");
+		return 0;
+	}
+}
+
+
+
+
+
+
+
